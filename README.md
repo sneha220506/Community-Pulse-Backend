@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # CommunityPulse Backend API
 
 Smart Resource Allocation - Data-Driven Volunteer Coordination for Social Impact
@@ -296,3 +297,6 @@ curl -X POST http://localhost:5000/api/surveys \
 - **Auth:** JWT (JSON Web Tokens) + bcryptjs
 - **Security:** Helmet, CORS, express-rate-limit
 - **Logging:** Morgan
+=======
+# Community-Pulse-Backend
+>>>>>>> c601a0b67d30c340a50305db0bdd81b3c6832cc0
