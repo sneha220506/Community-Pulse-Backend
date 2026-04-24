@@ -69,7 +69,7 @@ app.use('/api/', limiter);
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
-    message: 'ImpactHub API is running',
+    message: 'CommunityPulse API is running',
     environment: process.env.NODE_ENV || 'development',
     timestamp: new Date().toISOString(),
     uptime: process.uptime()
@@ -83,7 +83,7 @@ app.get('/api/health', (req, res) => {
 app.get('/api', (req, res) => {
   res.json({
     success: true,
-    message: 'Welcome to ImpactHub API - Smart Resource Allocation for Social Impact',
+    message: 'Welcome to CommunityPulse API - Smart Resource Allocation for Social Impact',
     version: '1.0.0',
     endpoints: {
       auth: {
@@ -171,7 +171,7 @@ const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`
   ╔══════════════════════════════════════════════╗
-  ║   🤝 ImpactHub API Server                   ║
+  ║   🤝 CommunityPulse API Server                   ║
   ║   Running on port ${PORT}                       ║
   ║   Environment: ${process.env.NODE_ENV || 'development'}            ║
   ║   API: http://localhost:${PORT}/api              ║

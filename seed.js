@@ -13,15 +13,15 @@ const Survey = require('./models/Survey');
 const users = [
   {
     name: 'Admin User',
-    email: 'admin@impacthub.org',
+    email: 'admin@CommunityPulse.org',
     password: 'admin123',
     role: 'admin',
-    organization: 'ImpactHub',
+    organization: 'CommunityPulse',
     avatar: '👑'
   },
   {
     name: 'Sarah Coordinator',
-    email: 'sarah@impacthub.org',
+    email: 'sarah@CommunityPulse.org',
     password: 'password123',
     role: 'coordinator',
     organization: 'Community Aid NGO',
@@ -29,7 +29,7 @@ const users = [
   },
   {
     name: 'Raj Field Worker',
-    email: 'raj@impacthub.org',
+    email: 'raj@CommunityPulse.org',
     password: 'password123',
     role: 'field-worker',
     organization: 'Field Operations',
@@ -153,7 +153,7 @@ const surveys = [
 const seedDB = async () => {
   try {
     // Connect to DB
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/impacthub');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/CommunityPulse');
     console.log('📦 Connected to MongoDB');
 
     // Clear existing data
@@ -236,9 +236,9 @@ const seedDB = async () => {
   ║   Surveys:     ${surveys.length}                           ║
   ║                                              ║
   ║   Login credentials:                         ║
-  ║   Admin:    admin@impacthub.org / admin123   ║
-  ║   Coord:    sarah@impacthub.org / password123║
-  ║   Worker:   raj@impacthub.org / password123  ║
+  ║   Admin:    admin@CommunityPulse.org / admin123   ║
+  ║   Coord:    sarah@CommunityPulse.org / password123║
+  ║   Worker:   raj@CommunityPulse.org / password123  ║
   ╚══════════════════════════════════════════════╝
     `);
 

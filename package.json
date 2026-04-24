@@ -1,7 +1,7 @@
 {
-  "name": "impacthub-server",
+  "name": "CommunityPulse-server",
   "version": "1.0.0",
-  "description": "ImpactHub - Smart Resource Allocation Backend API",
+  "description": "CommunityPulse - Smart Resource Allocation Backend API",
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
