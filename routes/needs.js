@@ -1,7 +1,8 @@
 const express = require('express');
 const { protect, authorize } = require('../middleware/auth');
 const {
-  getNeeds, getNeed, createNeed, updateNeed, deleteNeed, verifyNeed, getNeedStats
+  getNeeds, getNeed, createNeed, updateNeed, deleteNeed, verifyNeed, getNeedStats,
+  getCriticalNeeds
 } = require('../controllers/needController');
 
 const router = express.Router();
@@ -9,6 +10,7 @@ const router = express.Router();
 // Public routes
 router.get('/stats', getNeedStats);
 router.get('/', getNeeds);
+router.get('/getcriticalneeds', getCriticalNeeds);
 router.get('/:id', getNeed);
 
 // Protected routes

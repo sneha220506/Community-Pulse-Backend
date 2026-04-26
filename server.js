@@ -97,6 +97,7 @@ app.get('/api', (req, res) => {
       needs: {
         'GET    /api/needs': 'Get all community needs (filterable)',
         'GET    /api/needs/stats': 'Get need statistics',
+        'GET    /api/needs/getcriticalneeds': 'Get Critical need Detail',
         'GET    /api/needs/:id': 'Get single need',
         'POST   /api/needs': 'Create a need (Protected)',
         'PUT    /api/needs/:id': 'Update a need (Protected)',

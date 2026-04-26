@@ -109,6 +109,7 @@ server/
 |--------|----------|------|-------------|
 | GET | `/api/needs` | Public | List all needs (filterable) |
 | GET | `/api/needs/stats` | Public | Get need statistics |
+| GET | `/api/needs/getcriticalneeds` | Public | Get Critical needs Details |
 | GET | `/api/needs/:id` | Public | Get single need |
 | POST | `/api/needs` | Admin/Coord/FW | Create need |
 | PUT | `/api/needs/:id` | Admin/Coord | Update need |

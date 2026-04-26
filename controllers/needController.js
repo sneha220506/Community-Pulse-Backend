@@ -201,4 +201,24 @@ const getNeedStats = async (req, res, next) => {
   }
 };
 
-module.exports = { getNeeds, getNeed, createNeed, updateNeed, deleteNeed, verifyNeed, getNeedStats };
+const getCriticalNeeds = async (req, res) => {
+  try {
+    const criticalNeeds = await Need.find({ urgency: "critical" })
+    .select("title location category description affectedPeople volunteersNeeded volunteersAssigned")
+      .sort({ createdAt: -1 }); // latest first
+
+    res.status(200).json({
+      success: true,
+      count: criticalNeeds.length,
+      data: criticalNeeds,
+    });
+  } catch (error) {
+    console.error("Error fetching critical needs:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+module.exports = { getNeeds, getNeed, createNeed, updateNeed, deleteNeed, verifyNeed, getNeedStats ,getCriticalNeeds };
+// #f3f0fa
