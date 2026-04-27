@@ -167,7 +167,7 @@ server/
 |------|-------------|
 | `admin` | Full access to all endpoints |
 | `coordinator` | Create/edit needs, tasks, assign volunteers, verify |
-| `field-worker` | Create needs, submit reports |
+| `volunteer` | Create needs, submit reports |
 | `volunteer` | Update own profile, change status |
 | `viewer` | Read-only access |
 
@@ -269,7 +269,7 @@ curl -X POST "http://localhost:5000/api/matching/all?minScore=40&maxPerNeed=5" \
 curl -X POST http://localhost:5000/api/surveys \
   -H "Content-Type: application/json" \
   -d '{
-    "submittedBy": "Field Worker - John",
+    "submittedBy": "volunteer - John",
     "location": "South Ward",
     "category": "food",
     "description": "Food supplies critically low",
@@ -286,7 +286,7 @@ curl -X POST http://localhost:5000/api/surveys \
 |------|-------|----------|
 | Admin | admin@CommunityPulse.org | admin123 |
 | Coordinator | sarah@CommunityPulse.org | password123 |
-| Field Worker | raj@CommunityPulse.org | password123 |
+| volunteer | raj@CommunityPulse.org | password123 |
 
 ---
 

@@ -40,7 +40,8 @@ app.use(cors({
   origin: [
     'http://localhost:5173',
     'http://localhost:3000',
-    'https://community-pulse-frontend.onrender.com'
+    'https://community-pulse-frontend.onrender.com',
+    'https://communitypulse-a614d.web.app/'
   ],
   credentials: true
 }));

@@ -28,10 +28,10 @@ const users = [
     avatar: '👩‍💼'
   },
   {
-    name: 'Raj Field Worker',
+    name: 'Raj volunteer',
     email: 'raj@CommunityPulse.org',
     password: 'password123',
-    role: 'field-worker',
+    role: 'volunteer',
     organization: 'Field Operations',
     avatar: '👷'
   }
@@ -139,14 +139,14 @@ const needs = [
 ];
 
 const surveys = [
-  { submittedBy: 'Field Worker - Raj K.', location: 'Riverside District', region: 'North Zone', category: 'healthcare', description: 'Water contamination confirmed. 3 wells tested positive for bacteria.', affectedCount: 8500, urgency: 'critical', verified: true, source: 'field-report', surveyType: 'observation' },
+  { submittedBy: 'volunteer - Raj K.', location: 'Riverside District', region: 'North Zone', category: 'healthcare', description: 'Water contamination confirmed. 3 wells tested positive for bacteria.', affectedCount: 8500, urgency: 'critical', verified: true, source: 'field-report', surveyType: 'observation' },
   { submittedBy: 'NGO - EduFirst', location: 'Hilltop Area', region: 'East Zone', category: 'education', description: 'School inventory check shows 78% of students sharing textbooks.', affectedCount: 350, urgency: 'high', verified: true, source: 'ngo', surveyType: 'community-meeting' },
   { submittedBy: 'Community Leader - Maria G.', location: 'South Ward', region: 'South Zone', category: 'food', description: 'Factory closure affecting 500+ families. Food bank running critically low.', affectedCount: 2100, urgency: 'critical', verified: true, source: 'community', surveyType: 'door-to-door' },
-  { submittedBy: 'Field Worker - Anita S.', location: 'Sunset Boulevard', region: 'West Zone', category: 'elderly', description: 'Sunset Home understaffed. Seniors missing medication schedules regularly.', affectedCount: 120, urgency: 'high', verified: true, source: 'field-report', surveyType: 'observation' },
+  { submittedBy: 'volunteer - Anita S.', location: 'Sunset Boulevard', region: 'West Zone', category: 'elderly', description: 'Sunset Home understaffed. Seniors missing medication schedules regularly.', affectedCount: 120, urgency: 'high', verified: true, source: 'field-report', surveyType: 'observation' },
   { submittedBy: 'Volunteer - Omar H.', location: 'Valley Creek', region: 'North Zone', category: 'shelter', description: '45 homes completely destroyed. Families need permanent shelter solutions.', affectedCount: 340, urgency: 'critical', verified: true, source: 'field-report', surveyType: 'door-to-door' },
   { submittedBy: 'Community Leader - John D.', location: 'Central Park', region: 'Central Zone', category: 'environment', description: 'Illegal dumping increasing. Park becoming unusable for families.', affectedCount: 15000, urgency: 'medium', verified: false, source: 'community', surveyType: 'community-meeting' },
   { submittedBy: 'NGO - YouthRise', location: 'Oak Street CC', region: 'East Zone', category: 'youth', description: 'At-risk youth dropping out of school at alarming rate in this area.', affectedCount: 85, urgency: 'medium', verified: true, source: 'ngo', surveyType: 'phone-survey' },
-  { submittedBy: 'Field Worker - Dr. Priya', location: 'Marshland Settlements', region: 'South Zone', category: 'healthcare', description: 'Dengue cases spiking. 400+ confirmed cases in 2 weeks.', affectedCount: 420, urgency: 'critical', verified: true, source: 'field-report', surveyType: 'door-to-door' }
+  { submittedBy: 'volunteer - Dr. Priya', location: 'Marshland Settlements', region: 'South Zone', category: 'healthcare', description: 'Dengue cases spiking. 400+ confirmed cases in 2 weeks.', affectedCount: 420, urgency: 'critical', verified: true, source: 'field-report', surveyType: 'door-to-door' }
 ];
 
 // Seed function
@@ -220,7 +220,7 @@ const seedDB = async () => {
     console.log('📝 Creating survey entries...');
     for (const survey of surveys) {
       if (!survey.submitterId) {
-        survey.submitterId = createdUsers[2]._id; // Assign to field worker
+        survey.submitterId = createdUsers[2]._id; // Assign to volunteer
       }
     }
     await Survey.insertMany(surveys);
