@@ -3,6 +3,7 @@ const { protect, authorize, optionalAuth } = require('../middleware/auth');
 const {
   getSurveys, getSurvey, submitSurvey, verifySurvey, deleteSurvey, getSurveyStats
 } = require('../controllers/surveyController');
+const upload = require('../middleware/upload');
 
 const router = express.Router();
 
@@ -12,8 +13,12 @@ router.get('/', getSurveys);
 router.get('/:id', getSurvey);
 
 // Allow anyone to submit reports (optionally authenticated)
-router.post('/', optionalAuth, submitSurvey);
-
+router.post(
+  '/',
+  optionalAuth,
+  upload.array('photos', 5), // 👈 ye add karo
+  submitSurvey
+);
 // Protected routes
 router.put(
   '/:id/verify',

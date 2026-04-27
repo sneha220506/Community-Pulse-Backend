@@ -48,6 +48,7 @@ app.use(cors({
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static('uploads'));
 
 // HTTP request logging
 if (process.env.NODE_ENV !== 'test') {

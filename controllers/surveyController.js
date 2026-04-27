@@ -61,13 +61,26 @@ const submitSurvey = async (req, res, next) => {
       req.body.submitterId = req.user.id;
     }
 
-    const survey = await Survey.create(req.body);
+    let photos = [];
 
+    // IMP
+    if (req.files && req.files.length > 0) {
+      photos = req.files.map(file => ({
+        url: `/uploads/${file.filename}`,
+        caption: file.originalname
+      }));
+    }
+
+    const survey = await Survey.create({
+      ...req.body,
+      photos
+    });
     res.status(201).json({
       success: true,
-      message: 'Field report submitted successfully. It will be reviewed by our coordination team.',
+      message: 'Field report submitted successfully.',
       data: survey
     });
+
   } catch (error) {
     next(error);
   }
