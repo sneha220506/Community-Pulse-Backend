@@ -37,9 +37,11 @@ app.use(helmet());
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? ['https://community-pulse-frontend.onrender.com/']
-    : ['http://localhost:3000', 'http://localhost:5173'],
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'https://community-pulse-frontend.onrender.com'
+  ],
   credentials: true
 }));
 
