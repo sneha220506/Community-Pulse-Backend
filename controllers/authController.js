@@ -2,6 +2,11 @@ const User = require("../models/User");
 const { AppError } = require("../middleware/errorHandler");
 const verificationEmailTemplate = require("../utils/emailTemplates/verificationEmail");
 const welcomeEmail = require("../utils/emailTemplates/welcomeEmail");
+const crypto = require("crypto");
+const resetPasswordEmail = require("../utils/emailTemplates/resetPasswordEmail");
+const bcrypt = require("bcryptjs/dist/bcrypt");
+const { generateOTP } = require("../utils/generateOTP");
+const sendEmail = require("../utils/sendEmail");
 
 const register = async (req, res, next) => {
   try {
@@ -13,7 +18,6 @@ const register = async (req, res, next) => {
       role,
       organization,
       phone,
-      avatar,
       skills,
       availability,
       location,
@@ -36,8 +40,6 @@ const register = async (req, res, next) => {
       return next(new AppError("Email already registered", 400));
     }
 
-    // ✅ Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
 
     // ✅ Convert comma string → array
     const skillsArray = Array.isArray(skills)
@@ -52,18 +54,26 @@ const register = async (req, res, next) => {
         ? preferredCategories.split(",").map((c) => c.trim())
         : [];
 
+    const roleAvatars = {
+      admin: "👑",
+      volunteer: "👩‍💼",
+      coordinator: "👷",
+      viewer: "👷",
+    };
+    const avatar = roleAvatars[req.body.role] || "👤";
+
     // ✅ Generate OTP
     const otp = generateOTP();
 
     const user = await User.create({
       name,
       email,
-      password: hashedPassword,
+      password,
       role: role || "viewer",
       organization,
       phone,
 
-      avatar: avatar || "👤",
+      avatar: avatar,
       skills: skillsArray,
       availability,
       location,
@@ -108,14 +118,15 @@ const login = async (req, res, next) => {
 
     // Check password
     const isMatch = await user.comparePassword(password);
+    console.log(isMatch);
     if (!isMatch) {
       return next(new AppError("Invalid credentials", 401));
     }
 
     // Update last login
     user.lastLogin = new Date();
-    await user.save({ validateBeforeSave: false });
-
+// user.save() ki jagah ye use karein:
+await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
     const token = user.generateAuthToken();
 
     res.json({
@@ -214,18 +225,17 @@ const verifyEmail = async (req, res) => {
 
   user.isVerified = true;
   user.verificationCode = undefined;
-  await sendEmail(email, "Welcome to  - CommunityPulse", welcomeEmail(user.name));
+  await sendEmail(
+    email,
+    "Welcome to  - CommunityPulse",
+    welcomeEmail(user.name),
+  );
   await user.save();
 
   res.json({ message: "Email verified" });
 };
 
-const crypto = require("crypto");
 
-const resetPasswordEmail = require("../utils/emailTemplates/resetPasswordEmail");
-const bcrypt = require("bcryptjs/dist/bcrypt");
-const { generateOTP } = require("../utils/generateOTP");
-const sendEmail = require("../utils/sendEmail");
 
 const forgotPassword = async (req, res, next) => {
   try {
