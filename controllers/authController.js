@@ -66,7 +66,7 @@ const register = async (req, res, next) => {
 
     const user = await User.create({
       name,
-      email,
+      email:email.toLowerCase().trim(),
       password,
       role: role || "viewer",
       organization,
