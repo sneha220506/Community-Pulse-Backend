@@ -32,6 +32,7 @@ const port  = process.env.PORT ;
 // MIDDLEWARE
 // ============================================
 
+app.set('trust proxy', 1);
 // Security headers
 app.use(helmet());
 
