@@ -1,3 +1,5 @@
+const { default: axios } = require("axios");
+
 const sendEmail = async (to, subject, html) => {
   console.log("--- Brevo Debug Start ---");
   console.log("Recipient:", to);
@@ -28,3 +30,4 @@ const sendEmail = async (to, subject, html) => {
     throw error;
   }
 };
+module.exports = sendEmail;

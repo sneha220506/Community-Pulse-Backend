@@ -66,7 +66,7 @@ const register = async (req, res, next) => {
 
     const user = await User.create({
       name,
-      email:email.toLowerCase().trim(),
+      email: email.toLowerCase().trim(),
       password,
       role: role || "viewer",
       organization,
@@ -107,19 +107,19 @@ const login = async (req, res, next) => {
     if (!email || !password) {
       return next(new AppError("Please provide email and password", 400));
     }
-
+    console.log(email, password);
     // Find user with password field
     const user = await User.findOne({ email }).select("+password");
-
+    console.log(user);
     if (!user) {
       return next(new AppError("Invalid credentials", 401));
     }
 
     // Check password
-    const isMatch = await user.comparePassword(password);
+    const isMatch = await bcrypt.compare(password, user.password);
     console.log(isMatch);
     if (!isMatch) {
-      return next(new AppError("Invalid credentials", 401));
+      return next(new AppError("Invalid Password", 401));
     }
 
     // Update last login
