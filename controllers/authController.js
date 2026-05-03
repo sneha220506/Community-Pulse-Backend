@@ -40,7 +40,6 @@ const register = async (req, res, next) => {
       return next(new AppError("Email already registered", 400));
     }
 
-
     // ✅ Convert comma string → array
     const skillsArray = Array.isArray(skills)
       ? skills
@@ -125,8 +124,8 @@ const login = async (req, res, next) => {
 
     // Update last login
     user.lastLogin = new Date();
-// user.save() ki jagah ye use karein:
-await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
+    // user.save() ki jagah ye use karein:
+    await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
     const token = user.generateAuthToken();
 
     res.json({
@@ -235,14 +234,11 @@ const verifyEmail = async (req, res) => {
   res.json({ message: "Email verified" });
 };
 
-
-
 const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
 
-    const user = await User.findOne({ email });
-
+    const user = await User.findOne({ email: email.toLowerCase() });
     // 🔒 Don't reveal if email exists
     if (!user) {
       return res.json({ message: "If email exists, link sent" });
@@ -263,7 +259,7 @@ const forgotPassword = async (req, res, next) => {
     await user.save();
 
     const url = `https://communitypulse-a614d.web.app/reset/${resetToken}`;
-
+    console.log("TRIGGERING EMAIL NOW");
     // ✅ Use your template
     await sendEmail(
       email,
