@@ -1,14 +1,14 @@
-const axios = require("axios");
-
 const sendEmail = async (to, subject, html) => {
+  console.log("--- Brevo Debug Start ---");
+  console.log("Recipient:", to);
+  console.log("Sender Email (from env):", process.env.EMAIL_FROM);
+  console.log("API Key Length:", process.env.BREVO_API_KEY?.length || 0);
+
   try {
-    await axios.post(
+    const response = await axios.post(
       "https://api.brevo.com/v3/smtp/email",
       {
-        sender: {
-          email: process.env.EMAIL_FROM,
-          name: "CommunityPulse",
-        },
+        sender: { email: process.env.EMAIL_FROM, name: "CommunityPulse" },
         to: [{ email: to }],
         subject: subject,
         htmlContent: html,
@@ -17,21 +17,14 @@ const sendEmail = async (to, subject, html) => {
         headers: {
           "api-key": process.env.BREVO_API_KEY,
           "Content-Type": "application/json",
-        },
+        }
       }
     );
+    console.log("--- Brevo Success! Response ID:", response.data.messageId);
   } catch (error) {
-    if (error.response) {
-      // API ne response diya (401, 403, 400 etc)
-      console.error("Brevo API Error:", error.response.status, error.response.data);
-    } else if (error.request) {
-      // Request bheji gayi par response nahi mila (Network Issue)
-      console.error("Network Error: No response received from Brevo");
-    } else {
-      console.error("Error Message:", error.message);
-    }
+    console.error("--- Brevo Failed! ---");
+    console.error("Status Code:", error.response?.status);
+    console.error("Error Detail:", JSON.stringify(error.response?.data));
     throw error;
   }
 };
-
-module.exports = sendEmail;
