@@ -21,7 +21,15 @@ const sendEmail = async (to, subject, html) => {
       }
     );
   } catch (error) {
-    console.error("Email error:", error.response?.data || error.message);
+    if (error.response) {
+      // API ne response diya (401, 403, 400 etc)
+      console.error("Brevo API Error:", error.response.status, error.response.data);
+    } else if (error.request) {
+      // Request bheji gayi par response nahi mila (Network Issue)
+      console.error("Network Error: No response received from Brevo");
+    } else {
+      console.error("Error Message:", error.message);
+    }
     throw error;
   }
 };
