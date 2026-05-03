@@ -262,7 +262,7 @@ const forgotPassword = async (req, res, next) => {
 
     await user.save();
 
-    const url = `http://localhost:3000/reset/${resetToken}`;
+    const url = `https://communitypulse-a614d.web.app/reset/${resetToken}`;
 
     // ✅ Use your template
     await sendEmail(
@@ -291,9 +291,8 @@ const resetPassword = async (req, res, next) => {
 
     const user = await User.findOne({
       resetPasswordToken: hashedToken,
-      resetPasswordExpires: { $gt: Date.now() },
     });
-
+    console.log(user);
     if (!user) {
       return next(new AppError("Invalid or expired token", 400));
     }
