@@ -7,6 +7,15 @@ const resetPasswordEmail = require("../utils/emailTemplates/resetPasswordEmail")
 const bcrypt = require("bcryptjs/dist/bcrypt");
 const { generateOTP } = require("../utils/generateOTP");
 const sendEmail = require("../utils/sendEmail");
+const jwt =require( "jsonwebtoken");
+
+const generateToken = (user) => {
+  return jwt.sign(
+    { id: user._id },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+};
 
 const register = async (req, res, next) => {
   try {
@@ -209,6 +218,7 @@ const changePassword = async (req, res, next) => {
   }
 };
 
+
 const verifyEmail = async (req, res) => {
   const { email, otp } = req.body;
 
@@ -224,14 +234,30 @@ const verifyEmail = async (req, res) => {
 
   user.isVerified = true;
   user.verificationCode = undefined;
-  await sendEmail(
-    email,
-    "Welcome to  - CommunityPulse",
-    welcomeEmail(user.name),
-  );
+  user.verificationExpires = undefined;
+
   await user.save();
 
-  res.json({ message: "Email verified" });
+  // ✅ TOKEN generate karo
+  const token = generateToken(user);
+
+  await sendEmail(
+    email,
+    "Welcome to CommunityPulse",
+    welcomeEmail(user.name)
+  );
+
+  // ✅ IMPORTANT: user + token return karo
+  res.json({
+    token,
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      avatar: user.avatar,
+    },
+  });
 };
 
 const forgotPassword = async (req, res, next) => {
