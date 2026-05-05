@@ -6,6 +6,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const { initSocket } = require('./config/socket');
 
 // Import database connection
 const connectDB = require('./config/db');
@@ -17,7 +18,8 @@ const volunteerRoutes = require('./routes/volunteers');
 const taskRoutes = require('./routes/tasks');
 const surveyRoutes = require('./routes/surveys');
 const matchingRoutes = require('./routes/matching');
-
+const notificationRoutes = require('./routes/notification');
+const {Server}=require("socket.io")
 // Import error handlers
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 
@@ -158,6 +160,7 @@ app.use('/api/volunteers', volunteerRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/surveys', surveyRoutes);
 app.use('/api/matching', matchingRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // ============================================
 // ERROR HANDLING
@@ -177,14 +180,16 @@ const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => {
   console.log(`
-  ╔══════════════════════════════════════════════╗
-  ║   🤝 CommunityPulse API Server                   ║
-  ║   Running on port ${PORT}                       ║
-  ║   Environment: ${process.env.NODE_ENV || 'development'}            ║
-  ║   API: http://localhost:${PORT}/api              ║
-  ╚══════════════════════════════════════════════╝
+  ╔══════════════════════════════════════════════════════════
+  ║   🤝 CommunityPulse API Server                           
+  ║   Running on port ${PORT}                                
+  ║   Environment: ${process.env.NODE_ENV || 'development'}  
+  ║   API: http://localhost:${PORT}/api                      
+  ╚══════════════════════════════════════════════════════════
   `);
 });
+
+initSocket(server);
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {
