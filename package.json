@@ -25,7 +25,8 @@
     "multer": "^2.1.1",
     "nodemailer": "^8.0.7",
     "socket.io": "^4.8.3",
-    "validator": "^13.11.0"
+    "validator": "^13.11.0",
+    "ws": "^8.20.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
