@@ -1,8 +1,10 @@
+const mongoose = require("mongoose");
 const Survey = require("../models/Survey");
 const User = require("../models/User");
 const { AppError } = require("../middleware/errorHandler");
 const { getIO } = require("../config/socket");
 const Notification = require("../models/Notification");
+const Need = require("../models/Need");
 
 const getSurveys = async (req, res, next) => {
   try {
@@ -91,7 +93,7 @@ const submitSurvey = async (req, res, next) => {
         // ✅ Emit each notification with its unique ID
         savedNotifs.forEach((notif) => {
           const socketPayload = {
-            _id: notif._id,  // ✅ Unique ID per notification
+            _id: notif._id, // ✅ Unique ID per notification
             title: notif.title,
             message: notif.message,
             type: notif.type,
@@ -101,7 +103,10 @@ const submitSurvey = async (req, res, next) => {
           };
 
           // ✅ Send to specific recipient
-          io.to(notif.recipient.toString()).emit("NOTIFICATION_RECEIVED", socketPayload);
+          io.to(notif.recipient.toString()).emit(
+            "NOTIFICATION_RECEIVED",
+            socketPayload,
+          );
         });
       }
     }
@@ -113,50 +118,95 @@ const submitSurvey = async (req, res, next) => {
   }
 };
 const verifySurvey = async (req, res, next) => {
+  const session=await mongoose.startSession();
+  session.startTransaction();
   try {
-    const survey = await Survey.findByIdAndUpdate(
-      req.params.id,
-      {
-        verified: true,
-        verifiedBy: req.user.id,
-        verifiedAt: new Date(),
-      },
-      { new: true, runValidators: true },
-    );
+    const survey= await Survey.findById(req.params.id).session(session);
 
-    if (!survey) {
-      return next(new AppError("Survey entry not found", 404));
+    if(!survey){
+      await session.abortTransaction();
+      session.endSession();
+      return next(new AppError("Survey not found",404));
+    }
+    if (survey.verified) {
+      await session.abortTransaction();
+      session.endSession();
+      return next(new AppError("Survey is already verified", 400));
     }
 
-    const notification = await Notification.create({
-      recipient: survey.submitterId,
-      sender: req.user.id,
-      type: "SURVEY_APPROVED",
-      title: "Survey Verified",
-      message: `Your survey "${survey.title || "Report"}" has been approved and verified!`,
-      relatedId: survey._id,
-      onModel: "Survey",
-    });
+    const newNeedData = {
+      title: `Operation: ${survey.category} relief required at ${survey.location}`,
+      category: survey.category,
+      urgency: survey.urgency,
+      location: survey.location,
+      region: survey.region,
+      description: survey.description,
+      affectedPeople: survey.affectedCount, 
+      source: survey.source || "survey",
+      volunteersNeeded: req.body.volunteersNeeded || 2, 
+      tags: survey.tags || [],
+      images: survey.photos?.map((p) => p.url) || [], 
+      reportedBy: survey.submitterId || req.user.id,
+      verifiedBy: req.user.id,
+      verified: true,
+      status: "open"
+    };
 
+    const need = await Need.create([newNeedData], { session });
+    const savedNeed = need[0]; 
+    survey.verified = true;
+    survey.verifiedBy = req.user.id;
+    survey.verifiedAt = new Date();
+    survey.linkedNeedId = savedNeed._id;
+
+    await survey.save({ session, runValidators: true });
+
+    const notification = await Notification.create(
+      [
+        {
+          recipient: survey.submitterId,
+          sender: req.user.id,
+          type: "SURVEY_APPROVED",
+          title: "Survey Verified",
+          message: `Your survey for ${survey.category} at "${survey.location}" has been approved!`,
+          relatedId: survey._id,
+          onModel: "Survey",
+        },
+      ],
+      { session }
+    );
+    const savedNotification = notification[0];
+
+    
+    await session.commitTransaction();
+    session.endSession();
+
+    
     const io = getIO();
-
-    // ✅ Use _id instead of id for consistency
-    io.to(survey.submitterId.toString()).emit("NOTIFICATION_RECEIVED", {
-      _id: notification._id,  // ✅ Changed from 'id'
-      type: notification.type,
-      title: notification.title,
-      message: notification.message,
-      createdAt: notification.createdAt,
-      isRead: notification.isRead,
-      surveyId: survey._id,
-    });
+    if (survey.submitterId) {
+      io.to(survey.submitterId.toString()).emit("NOTIFICATION_RECEIVED", {
+        _id: savedNotification._id,
+        type: savedNotification.type,
+        title: savedNotification.title,
+        message: savedNotification.message,
+        createdAt: savedNotification.createdAt,
+        isRead: savedNotification.isRead,
+        surveyId: survey._id,
+      });
+    }
 
     res.json({
       success: true,
-      message: "Survey verified successfully",
-      data: survey,
+      message: "Survey verified and converted to active Need successfully",
+      data: {
+        survey,
+        need: savedNeed,
+      },
     });
   } catch (error) {
+    
+    await session.abortTransaction();
+    session.endSession();
     next(error);
   }
 };
