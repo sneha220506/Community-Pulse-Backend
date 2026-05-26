@@ -67,7 +67,7 @@ const surveySchema = new mongoose.Schema({
   // Additional survey-specific fields
   surveyType: {
     type: String,
-    enum: ['door-to-door', 'community-meeting', 'phone-survey', 'online', 'observation', 'other'],
+    enum: ['door-to-door', 'community-meeting', 'phone-survey', 'online', 'observation', 'other','interview'],
     default: 'observation'
   },
   contactPerson: {
