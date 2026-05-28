@@ -38,15 +38,7 @@ const userSchema = new mongoose.Schema(
     },
     region: {
       type: String,
-      enum: [
-        "North Zone",
-        "South Zone",
-        "East Zone",
-        "West Zone",
-        "Central Zone",
-        "All Zones",
-      ],
-      default: "Central Zone",
+      trim:true,
     },
     organization: {
       type: String,

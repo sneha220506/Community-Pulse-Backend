@@ -62,11 +62,50 @@ const getSurvey = async (req, res, next) => {
 
 const submitSurvey = async (req, res, next) => {
   try {
-    const survey = await Survey.create({
+    // Prepare survey data
+    const surveyData = {
       ...req.body,
       submitterId: req.user.id,
-    });
+    };
 
+    // Handle GPS coordinates if provided
+    if (req.body["gpsCoordinates[latitude]"] && req.body["gpsCoordinates[longitude]"]) {
+      surveyData.gpsCoordinates = {
+        latitude: parseFloat(req.body["gpsCoordinates[latitude]"]),
+        longitude: parseFloat(req.body["gpsCoordinates[longitude]"]),
+      };
+
+      // GeoJSON format for MongoDB geospatial queries
+      // Note: GeoJSON uses [longitude, latitude] order
+      surveyData.mapLocation = {
+        type: "Point",
+        coordinates: [
+          parseFloat(req.body["gpsCoordinates[longitude]"]),
+          parseFloat(req.body["gpsCoordinates[latitude]"])
+        ],
+      };
+
+      // Clean up the bracket notation keys
+      delete surveyData["gpsCoordinates[latitude]"];
+      delete surveyData["gpsCoordinates[longitude]"];
+      delete surveyData["mapLocation[type]"];
+      delete surveyData["mapLocation[coordinates][0]"];
+      delete surveyData["mapLocation[coordinates][1]"];
+    }
+
+    // Handle file uploads (photos)
+    if (req.files && req.files.length > 0) {
+      surveyData.photos = req.files.map((file) => ({
+        url: `/uploads/${file.filename}`,
+        caption: req.body.photoCaption || "",
+        uploadedAt: new Date(),
+      }));
+    }
+
+    // Create survey
+    const survey = await Survey.create(surveyData);
+
+    // Find admin and coordinator users for notifications
     const staffMembers = await User.find({
       role: { $in: ["admin", "coordinator"] },
     });
@@ -77,7 +116,7 @@ const submitSurvey = async (req, res, next) => {
         sender: req.user.id,
         type: "NEW_SURVEY",
         title: "New Survey Submitted",
-        message: `${req.user.name} has submitted a new report.`,
+        message: `${req.user.name} has submitted a new report from ${survey.location || "Unknown Location"}.`,
         relatedId: survey._id,
         onModel: "Survey",
       }));
@@ -111,10 +150,17 @@ const submitSurvey = async (req, res, next) => {
       }
     }
 
-    res.status(201).json({ success: true, data: survey });
+    res.status(201).json({ 
+      success: true, 
+      data: survey,
+      message: "Survey submitted successfully"
+    });
   } catch (error) {
-    console.error("Survey Error:", error);
-    res.status(400).json({ success: false, message: error.message });
+    console.error("Survey Submission Error:", error);
+    res.status(400).json({ 
+      success: false, 
+      message: error.message || "Failed to submit survey"
+    });
   }
 };
 const verifySurvey = async (req, res, next) => {
