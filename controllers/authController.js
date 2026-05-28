@@ -7,14 +7,13 @@ const resetPasswordEmail = require("../utils/emailTemplates/resetPasswordEmail")
 const bcrypt = require("bcryptjs/dist/bcrypt");
 const { generateOTP } = require("../utils/generateOTP");
 const sendEmail = require("../utils/sendEmail");
-const jwt =require( "jsonwebtoken");
+const jwt = require("jsonwebtoken");
+const Volunteer = require("../models/Volunteer");
 
 const generateToken = (user) => {
-  return jwt.sign(
-    { id: user._id },
-    process.env.JWT_SECRET,
-    { expiresIn: "7d" }
-  );
+  return jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
 };
 
 const register = async (req, res, next) => {
@@ -32,6 +31,18 @@ const register = async (req, res, next) => {
       location,
       region,
       preferredCategories,
+
+      age,
+      status,
+      currentTask,
+      tasksCompleted,
+      rating,
+      totalRatings,
+      hoursLogged,
+      bio,
+      emergencyContact,
+      schedule,
+      joinedDate,
     } = req.body;
 
     // ✅ Validation
@@ -82,8 +93,6 @@ const register = async (req, res, next) => {
       phone,
 
       avatar: avatar,
-      skills: skillsArray,
-      availability,
       location,
       region,
       preferredCategories: categoriesArray,
@@ -91,6 +100,28 @@ const register = async (req, res, next) => {
       isVerified: false,
       verificationCode: otp,
       verificationExpires: Date.now() + 10 * 60 * 1000,
+    });
+    await Volunteer.create({
+      userId: user._id,
+      age,
+      skills: skillsArray,
+      availability,
+
+      status: "active",
+      currentTask: null,
+
+      preferredCategories: categoriesArray,
+
+      tasksCompleted: 0,
+      rating: 0,
+      totalRatings: 0,
+      hoursLogged: 0,
+
+      bio,
+      emergencyContact,
+      schedule,
+
+      joinedDate: new Date(),
     });
 
     // ✅ Send Email
@@ -218,7 +249,6 @@ const changePassword = async (req, res, next) => {
   }
 };
 
-
 const verifyEmail = async (req, res) => {
   const { email, otp } = req.body;
 
@@ -241,11 +271,7 @@ const verifyEmail = async (req, res) => {
   // ✅ TOKEN generate karo
   const token = generateToken(user);
 
-  await sendEmail(
-    email,
-    "Welcome to CommunityPulse",
-    welcomeEmail(user.name)
-  );
+  await sendEmail(email, "Welcome to CommunityPulse", welcomeEmail(user.name));
 
   // ✅ IMPORTANT: user + token return karo
   res.json({

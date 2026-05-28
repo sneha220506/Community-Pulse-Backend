@@ -3,68 +3,113 @@ const { AppError } = require('../middleware/errorHandler');
 
 const getVolunteers = async (req, res, next) => {
   try {
+
     const {
       status,
       availability,
-      region,
       skill,
       category,
-      sort = '-tasksCompleted',
+      sort = "-tasksCompleted",
       page = 1,
       limit = 20,
       search
     } = req.query;
 
     const filter = {};
+
+    // Volunteer schema filters
     if (status) filter.status = status;
-    if (availability) filter.availability = availability;
-    if (region) filter.region = region;
-    if (skill) filter.skills = { $in: [new RegExp(skill, 'i')] };
-    if (category) filter.preferredCategories = { $in: [category] };
+
+    if (availability) {
+      filter.availability = availability;
+    }
+
+    if (skill) {
+      filter.skills = {
+        $in: [new RegExp(skill, "i")]
+      };
+    }
+
+    if (category) {
+      filter.preferredCategories = {
+        $in: [category]
+      };
+    }
+
+    // Search inside volunteer fields
     if (search) {
       filter.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { skills: { $regex: search, $options: 'i' } },
-        { location: { $regex: search, $options: 'i' } }
+        {
+          skills: {
+            $regex: search,
+            $options: "i"
+          }
+        }
       ];
     }
 
-    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const skip =
+      (parseInt(page) - 1) * parseInt(limit);
+
     const volunteers = await Volunteer.find(filter)
-      .select('-password')
+
+      .populate(
+        "userId",
+        "name email phone region avatar location"
+      )
+
       .sort(sort)
+
       .skip(skip)
+
       .limit(parseInt(limit));
 
-    const total = await Volunteer.countDocuments(filter);
+    const total =
+      await Volunteer.countDocuments(filter);
 
     res.json({
       success: true,
       count: volunteers.length,
       total,
-      pages: Math.ceil(total / parseInt(limit)),
+      pages: Math.ceil(
+        total / parseInt(limit)
+      ),
       currentPage: parseInt(page),
+
       data: volunteers
     });
+
   } catch (error) {
     next(error);
   }
 };
-
 const getVolunteer = async (req, res, next) => {
   try {
-    const volunteer = await Volunteer.findById(req.params.id)
-      .select('-password')
-      .populate('currentTask');
+
+    const volunteer =
+      await Volunteer.findById(req.params.id)
+
+        .populate(
+          "userId",
+          "name email phone region avatar location"
+        )
+
+        .populate("currentTask");
 
     if (!volunteer) {
-      return next(new AppError('Volunteer not found', 404));
+      return next(
+        new AppError(
+          "Volunteer not found",
+          404
+        )
+      );
     }
 
     res.json({
       success: true,
       data: volunteer
     });
+
   } catch (error) {
     next(error);
   }
