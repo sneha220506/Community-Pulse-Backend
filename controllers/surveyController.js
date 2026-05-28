@@ -181,22 +181,28 @@ const verifySurvey = async (req, res, next) => {
     }
 
     const newNeedData = {
-      title: `Operation: ${survey.category} relief required at ${survey.location}`,
-      category: survey.category,
-      urgency: survey.urgency,
-      location: survey.location,
-      region: survey.region,
-      description: survey.description,
-      affectedPeople: survey.affectedCount, 
-      source: survey.source || "survey",
-      volunteersNeeded: req.body.volunteersNeeded || 2, 
-      tags: survey.tags || [],
-      images: survey.photos?.map((p) => p.url) || [], 
-      reportedBy: survey.submitterId || req.user.id,
-      verifiedBy: req.user.id,
-      verified: true,
-      status: "open"
-    };
+  title: `Operation: ${survey.category} relief required at ${survey.location}`,
+  category: survey.category,
+  urgency: survey.urgency,
+  location: survey.location,
+  region: survey.region,
+  description: survey.description,
+  affectedPeople: survey.affectedCount, 
+  source: survey.source || "survey",
+  volunteersNeeded: req.body.volunteersNeeded || 2, 
+  tags: survey.tags || [],
+  images: survey.photos?.map((p) => p.url) || [], 
+  reportedBy: survey.submitterId || req.user.id,
+  verifiedBy: req.user.id,
+  verified: true,
+  status: "open",
+  
+  // Directly maps incoming geometric telemetry to the upgraded schema
+  gpsCoordinates: {
+    latitude: req.body.latitude || survey.latitude || 20.5937,
+    longitude: req.body.longitude || survey.longitude || 78.9629
+  }
+};
 
     const need = await Need.create([newNeedData], { session });
     const savedNeed = need[0]; 
