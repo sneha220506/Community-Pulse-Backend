@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -33,6 +32,22 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "coordinator", "volunteer", "viewer"],
       default: "viewer",
     },
+    location: {
+      type: String,
+      trim: true,
+    },
+    region: {
+      type: String,
+      enum: [
+        "North Zone",
+        "South Zone",
+        "East Zone",
+        "West Zone",
+        "Central Zone",
+        "All Zones",
+      ],
+      default: "Central Zone",
+    },
     organization: {
       type: String,
       trim: true,
@@ -40,12 +55,6 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: String,
       trim: true,
-    },
-    skills: [String], // array
-    availability: {
-      type: String,
-      enum: ["full-time", "part-time", "weekends"],
-      default: "full-time",
     },
     avatar: {
       type: String,
