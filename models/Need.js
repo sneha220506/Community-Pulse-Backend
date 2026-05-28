@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const SERVER_URL = process.env.SERVER_URL || 'http://localhost:5000';
 
 const needSchema = new mongoose.Schema({
   title: {
@@ -26,7 +27,7 @@ const needSchema = new mongoose.Schema({
   region: {
     type: String,
     required: [true, 'Region is required'],
-    enum: ['North Zone', 'South Zone', 'East Zone', 'West Zone', 'Central Zone', 'All Zones']
+    trim:true,
   },
   description: {
     type: String,
@@ -67,13 +68,20 @@ const needSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Volunteer'
   }],
-  coordinates: {
-    x: { type: Number, min: 0, max: 100, default: 50 },
-    y: { type: Number, min: 0, max: 100, default: 50 }
+  // Refactored from arbitrary screen percentages to actual global geography coordinates
+  gpsCoordinates: {
+    latitude: { type: Number, required: true, min: -90, max: 90 },
+    longitude: { type: Number, required: true, min: -180, max: 180 }
   },
   images: [{
-    type: String // URLs to images
-  }],
+  type: String,
+  // The 'get' function modifies the value on the fly when passing data to the frontend
+  get: function(img) {
+    if (!img) return img;
+    if (img.startsWith('http://') || img.startsWith('https://')) return img;
+    return `${SERVER_URL}${img}`;
+  }
+}],
   tags: [{
     type: String,
     trim: true
@@ -92,8 +100,8 @@ const needSchema = new mongoose.Schema({
   }
 }, {
   timestamps: true,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true }
+  toJSON: { virtuals: true ,getters : true},
+  toObject: { virtuals: true ,getters : true}
 });
 
 // Virtual for volunteer coverage percentage
