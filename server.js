@@ -45,7 +45,7 @@ app.use(
       "http://localhost:5173",
       "http://localhost:3000",
       "https://community-pulse-frontend.onrender.com",
-      "https://hopeverse01.web.app/",
+      "https://hopeverse01.web.app",
     ],
     credentials: true,
   }),
