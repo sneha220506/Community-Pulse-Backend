@@ -6,7 +6,7 @@ const resetPasswordEmailTemplate = (resetUrl) => {
       
       <!-- Header -->
       <div style="background: #ff9800; color: white; text-align: center; padding: 20px;">
-        <h1 style="margin: 0;">CommunityPulse</h1>
+        <h1 style="margin: 0;">HopeVerse</h1>
         <p style="margin: 5px 0 0;">Password Reset</p>
       </div>
 
@@ -53,7 +53,7 @@ const resetPasswordEmailTemplate = (resetUrl) => {
 
       <!-- Footer -->
       <div style="background: #f4f4f4; padding: 15px; text-align: center; font-size: 12px; color: #888;">
-        © ${new Date().getFullYear()} CommunityPulse. All rights reserved.
+        © ${new Date().getFullYear()} HopeVerse. All rights reserved.
       </div>
 
     </div>

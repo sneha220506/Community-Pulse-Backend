@@ -127,7 +127,7 @@ const register = async (req, res, next) => {
     // ✅ Send Email
     await sendEmail(
       email,
-      "Verify Your Email - CommunityPulse",
+      "Verify Your Email - HopeVerse",
       verificationEmailTemplate(otp),
     );
 
@@ -271,7 +271,7 @@ const verifyEmail = async (req, res) => {
   // ✅ TOKEN generate karo
   const token = generateToken(user);
 
-  await sendEmail(email, "Welcome to CommunityPulse", welcomeEmail(user.name));
+  await sendEmail(email, "Welcome to HopeVerse", welcomeEmail(user.name));
 
   // ✅ IMPORTANT: user + token return karo
   res.json({
@@ -310,12 +310,12 @@ const forgotPassword = async (req, res, next) => {
 
     await user.save();
 
-    const url = `https://communitypulse-a614d.web.app/reset/${resetToken}`;
+    const url = `https://hopeverse01.web.app/reset/${resetToken}`;
     console.log("TRIGGERING EMAIL NOW");
     // ✅ Use your template
     await sendEmail(
       email,
-      "Reset Your Password - CommunityPulse",
+      "Reset Your Password - HopeVerse",
       resetPasswordEmail(url),
     );
 

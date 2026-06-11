@@ -13,15 +13,15 @@ const Survey = require('./models/Survey');
 const users = [
   {
     name: 'Admin User',
-    email: 'admin@CommunityPulse.org',
+    email: 'admin@HopeVerse.org',
     password: 'admin123',
     role: 'admin',
-    organization: 'CommunityPulse',
+    organization: 'HopeVerse',
     avatar: '👑'
   },
   {
     name: 'Sarah Coordinator',
-    email: 'sarah@CommunityPulse.org',
+    email: 'sarah@HopeVerse.org',
     password: 'password123',
     role: 'coordinator',
     organization: 'Community Aid NGO',
@@ -29,7 +29,7 @@ const users = [
   },
   {
     name: 'Raj volunteer',
-    email: 'raj@CommunityPulse.org',
+    email: 'raj@HopeVerse.org',
     password: 'password123',
     role: 'volunteer',
     organization: 'Field Operations',
@@ -153,7 +153,7 @@ const surveys = [
 const seedDB = async () => {
   try {
     // Connect to DB
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/CommunityPulse');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/HopeVerse');
     console.log('📦 Connected to MongoDB');
 
     // Clear existing data
@@ -236,9 +236,9 @@ const seedDB = async () => {
   ║   Surveys:     ${surveys.length}                           ║
   ║                                              ║
   ║   Login credentials:                         ║
-  ║   Admin:    admin@CommunityPulse.org / admin123   ║
-  ║   Coord:    sarah@CommunityPulse.org / password123║
-  ║   Worker:   raj@CommunityPulse.org / password123  ║
+  ║   Admin:    admin@HopeVerse.org / admin123   ║
+  ║   Coord:    sarah@HopeVerse.org / password123║
+  ║   Worker:   raj@HopeVerse.org / password123  ║
   ╚══════════════════════════════════════════════╝
     `);
 

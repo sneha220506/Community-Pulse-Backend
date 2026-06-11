@@ -8,7 +8,7 @@ const initSocket = (server) => {
       origin: [
         "http://localhost:5173",
         "https://community-pulse-frontend.onrender.com",
-        "https://communitypulse-a614d.web.app",
+        "https://hopeverse01.web.app/",
       ],
       credentials: true,
     },
