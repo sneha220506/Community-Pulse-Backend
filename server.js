@@ -45,7 +45,7 @@ app.use(
       "http://localhost:5173",
       "http://localhost:3000",
       "https://community-pulse-frontend.onrender.com",
-      "https://communitypulse-a614d.web.app",
+      "https://hopeverse01.web.app/",
     ],
     credentials: true,
   }),
@@ -85,7 +85,7 @@ app.use("/api/", limiter);
 app.get("/api/health", (req, res) => {
   res.json({
     success: true,
-    message: "CommunityPulse API is running",
+    message: "HopeVerse API is running",
     environment: process.env.NODE_ENV || "development",
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
@@ -100,7 +100,7 @@ app.get("/api", (req, res) => {
   res.json({
     success: true,
     message:
-      "Welcome to CommunityPulse API - Smart Resource Allocation for Social Impact",
+      "Welcome to HopeVerse API - Smart Resource Allocation for Social Impact",
     version: "1.0.0",
     endpoints: {
       auth: {
@@ -191,7 +191,7 @@ const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`
   ╔══════════════════════════════════════════════════════════
-  ║   🤝 CommunityPulse API Server                           
+  ║   🤝 HopeVerse API Server                           
   ║   Running on port ${PORT}                                
   ║   Environment: ${process.env.NODE_ENV || "development"}  
   ║   API: http://localhost:${PORT}/api                      

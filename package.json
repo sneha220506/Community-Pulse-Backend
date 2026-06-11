@@ -1,7 +1,7 @@
 {
-  "name": "CommunityPulse-server",
+  "name": "HopeVerse-server",
   "version": "1.0.0",
-  "description": "CommunityPulse - Smart Resource Allocation Backend API",
+  "description": "HopeVerse - Smart Resource Allocation Backend API",
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",

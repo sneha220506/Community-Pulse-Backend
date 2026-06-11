@@ -6,7 +6,7 @@ const welcomeEmailTemplate = (name) => {
       
       <!-- Header -->
       <div style="background: #4CAF50; color: white; text-align: center; padding: 20px;">
-        <h1 style="margin: 0;">CommunityPulse</h1>
+        <h1 style="margin: 0;">HopeVerse</h1>
         <p style="margin: 5px 0 0;">Welcome 🎉</p>
       </div>
 
@@ -16,7 +16,7 @@ const welcomeEmailTemplate = (name) => {
         <h2 style="color: #333;">Welcome, ${name} 👋</h2>
 
         <p style="color: #555;">
-          Your email has been successfully verified. You are now part of the CommunityPulse network.
+          Your email has been successfully verified. You are now part of the HopeVerse network.
         </p>
 
         <p style="color: #555;">
@@ -41,7 +41,7 @@ const welcomeEmailTemplate = (name) => {
 
       <!-- Footer -->
       <div style="background: #f4f4f4; padding: 15px; text-align: center; font-size: 12px; color: #888;">
-        © ${new Date().getFullYear()} CommunityPulse. All rights reserved.
+        © ${new Date().getFullYear()} HopeVerse. All rights reserved.
       </div>
 
     </div>

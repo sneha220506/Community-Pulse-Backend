@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-# CommunityPulse Backend API
+# HopeVerse Backend API
 
 Smart Resource Allocation - Data-Driven Volunteer Coordination for Social Impact
 
@@ -237,7 +237,7 @@ curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost:5000/api/auth/me
 ```bash
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@CommunityPulse.org","password":"admin123"}'
+  -d '{"email":"admin@HopeVerse.org","password":"admin123"}'
 ```
 
 ### Create a Need
@@ -284,9 +284,9 @@ curl -X POST http://localhost:5000/api/surveys \
 
 | Role | Email | Password |
 |------|-------|----------|
-| Admin | admin@CommunityPulse.org | admin123 |
-| Coordinator | sarah@CommunityPulse.org | password123 |
-| volunteer | raj@CommunityPulse.org | password123 |
+| Admin | admin@HopeVerse.org | admin123 |
+| Coordinator | sarah@HopeVerse.org | password123 |
+| volunteer | raj@HopeVerse.org | password123 |
 
 ---
 
