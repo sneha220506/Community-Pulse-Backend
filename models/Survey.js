@@ -155,14 +155,9 @@ const surveySchema = new mongoose.Schema(
 
     photos: [
       {
-        url: {
-          type: String,
-        },
-
-        caption: {
-          type: String,
-        },
-
+        url: String,
+        publicId: String,
+        caption: String,
         uploadedAt: {
           type: Date,
           default: Date.now,

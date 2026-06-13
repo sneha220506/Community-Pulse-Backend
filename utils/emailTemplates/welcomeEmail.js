@@ -24,7 +24,7 @@ const welcomeEmailTemplate = (name) => {
         </p>
 
         <!-- CTA -->
-        <a href="http://localhost:3000/dashboard" style="
+        <a href="https://hopeverse01.web.app/" style="
           display: inline-block;
           margin: 20px 0;
           padding: 12px 25px;

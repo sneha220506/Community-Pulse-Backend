@@ -16,7 +16,7 @@ router.get('/:id', getSurvey);
 router.post(
   '/',
   optionalAuth,
-  upload.array('photos', 5), // 👈 ye add karo
+  upload.array('photos', 10), // 👈 ye add karo
   submitSurvey
 );
 // Protected routes

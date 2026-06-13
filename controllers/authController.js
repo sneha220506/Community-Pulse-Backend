@@ -20,6 +20,7 @@ const register = async (req, res, next) => {
   try {
     const {
       name,
+      gender,
       email,
       password,
       confirmPassword,
@@ -79,13 +80,25 @@ const register = async (req, res, next) => {
       coordinator: "👷",
       viewer: "👷",
     };
-    const avatar = roleAvatars[req.body.role] || "👤";
+    let avatar;
 
+    if (role === "admin") {
+      avatar = "👑";
+    } else {
+      if (gender === "Male") {
+        avatar = "👨";
+      } else if (gender === "Female") {
+        avatar = "👩";
+      } else {
+        avatar = "🧑";
+      }
+    }
     // ✅ Generate OTP
     const otp = generateOTP();
 
     const user = await User.create({
       name,
+      gender,
       email: email.toLowerCase().trim(),
       password,
       role: role || "viewer",
@@ -288,6 +301,8 @@ const verifyEmail = async (req, res) => {
 
 const forgotPassword = async (req, res, next) => {
   try {
+    console.log("Before save");
+
     const { email } = req.body;
 
     const user = await User.findOne({ email: email.toLowerCase() });
@@ -310,9 +325,13 @@ const forgotPassword = async (req, res, next) => {
 
     await user.save();
 
+    console.log("After save");
     const url = `https://hopeverse01.web.app/reset/${resetToken}`;
     console.log("TRIGGERING EMAIL NOW");
     // ✅ Use your template
+    console.log("User found:", user.email);
+    console.log("Reset token generated");
+    console.log("Sending reset email...");
     await sendEmail(
       email,
       "Reset Your Password - HopeVerse",
