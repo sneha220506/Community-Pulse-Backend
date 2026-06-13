@@ -69,7 +69,10 @@ const submitSurvey = async (req, res, next) => {
     };
 
     // Handle GPS coordinates if provided
-    if (req.body["gpsCoordinates[latitude]"] && req.body["gpsCoordinates[longitude]"]) {
+    if (
+      req.body["gpsCoordinates[latitude]"] &&
+      req.body["gpsCoordinates[longitude]"]
+    ) {
       surveyData.gpsCoordinates = {
         latitude: parseFloat(req.body["gpsCoordinates[latitude]"]),
         longitude: parseFloat(req.body["gpsCoordinates[longitude]"]),
@@ -81,7 +84,7 @@ const submitSurvey = async (req, res, next) => {
         type: "Point",
         coordinates: [
           parseFloat(req.body["gpsCoordinates[longitude]"]),
-          parseFloat(req.body["gpsCoordinates[latitude]"])
+          parseFloat(req.body["gpsCoordinates[latitude]"]),
         ],
       };
 
@@ -96,12 +99,12 @@ const submitSurvey = async (req, res, next) => {
     // Handle file uploads (photos)
     if (req.files && req.files.length > 0) {
       surveyData.photos = req.files.map((file) => ({
-        url: `/uploads/${file.filename}`,
+        url: file.path,
+        publicId: file.filename,
         caption: req.body.photoCaption || "",
         uploadedAt: new Date(),
       }));
     }
-
     // Create survey
     const survey = await Survey.create(surveyData);
 
@@ -150,29 +153,29 @@ const submitSurvey = async (req, res, next) => {
       }
     }
 
-    res.status(201).json({ 
-      success: true, 
+    res.status(201).json({
+      success: true,
       data: survey,
-      message: "Survey submitted successfully"
+      message: "Survey submitted successfully",
     });
   } catch (error) {
     console.error("Survey Submission Error:", error);
-    res.status(400).json({ 
-      success: false, 
-      message: error.message || "Failed to submit survey"
+    res.status(400).json({
+      success: false,
+      message: error.message || "Failed to submit survey",
     });
   }
 };
 const verifySurvey = async (req, res, next) => {
-  const session=await mongoose.startSession();
+  const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    const survey= await Survey.findById(req.params.id).session(session);
+    const survey = await Survey.findById(req.params.id).session(session);
 
-    if(!survey){
+    if (!survey) {
       await session.abortTransaction();
       session.endSession();
-      return next(new AppError("Survey not found",404));
+      return next(new AppError("Survey not found", 404));
     }
     if (survey.verified) {
       await session.abortTransaction();
@@ -181,31 +184,38 @@ const verifySurvey = async (req, res, next) => {
     }
 
     const newNeedData = {
-  title: `Operation: ${survey.category} relief required at ${survey.location}`,
-  category: survey.category,
-  urgency: survey.urgency,
-  location: survey.location,
-  region: survey.region,
-  description: survey.description,
-  affectedPeople: survey.affectedCount, 
-  source: survey.source || "survey",
-  volunteersNeeded: req.body.volunteersNeeded || 2, 
-  tags: survey.tags || [],
-  images: survey.photos?.map((p) => p.url) || [], 
-  reportedBy: survey.submitterId || req.user.id,
-  verifiedBy: req.user.id,
-  verified: true,
-  status: "open",
-  
-  // Directly maps incoming geometric telemetry to the upgraded schema
-  gpsCoordinates: {
-    latitude: req.body.latitude || survey.latitude || 20.5937,
-    longitude: req.body.longitude || survey.longitude || 78.9629
-  }
-};
+      title: `Operation: ${survey.category} relief required at ${survey.location}`,
+      category: survey.category,
+      urgency: survey.urgency,
+      location: survey.location,
+      region: survey.region,
+      description: survey.description,
+      affectedPeople: survey.affectedCount,
+      source: survey.source || "survey",
+      volunteersNeeded: req.body.volunteersNeeded || 2,
+      tags: survey.tags || [],
+      images: survey.photos?.map((p) => p.url) || [],
+      reportedBy: survey.submitterId || req.user.id,
+      verifiedBy: req.user.id,
+      verified: true,
+      status: "open",
+
+      // Directly maps incoming geometric telemetry to the upgraded schema
+      gpsCoordinates: {
+  latitude:
+    req.body.latitude ||
+    survey.gpsCoordinates?.latitude ||
+    20.5937,
+
+  longitude:
+    req.body.longitude ||
+    survey.gpsCoordinates?.longitude ||
+    78.9629,
+},
+    };
 
     const need = await Need.create([newNeedData], { session });
-    const savedNeed = need[0]; 
+    const savedNeed = need[0];
     survey.verified = true;
     survey.verifiedBy = req.user.id;
     survey.verifiedAt = new Date();
@@ -225,15 +235,13 @@ const verifySurvey = async (req, res, next) => {
           onModel: "Survey",
         },
       ],
-      { session }
+      { session },
     );
     const savedNotification = notification[0];
 
-    
     await session.commitTransaction();
     session.endSession();
 
-    
     const io = getIO();
     if (survey.submitterId) {
       io.to(survey.submitterId.toString()).emit("NOTIFICATION_RECEIVED", {
@@ -256,7 +264,6 @@ const verifySurvey = async (req, res, next) => {
       },
     });
   } catch (error) {
-    
     await session.abortTransaction();
     session.endSession();
     next(error);

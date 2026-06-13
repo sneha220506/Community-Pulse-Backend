@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "coordinator", "volunteer", "viewer"],
       default: "viewer",
     },
+    gender:{
+      type:String,
+      enum: ["Male", "Female", "Other"],
+    },
     location: {
       type: String,
       trim: true,
@@ -50,7 +54,7 @@ const userSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
-      default: "👤",
+      default: null,
     },
     isActive: {
       type: Boolean,
